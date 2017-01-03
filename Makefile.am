@@ -5,6 +5,7 @@ SUBDIRS = tests doc
 AUTOMAKE_OPTIONS = subdir-objects foreign
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 
+BUILD_DIRS = BUILD BUILDROOT RPMS SOURCES SPECS SRPMS
 lib_LTLIBRARIES = libcircle.la
 
 libcircle_la_LIBADD = $(MPI_CLDFLAGS)
@@ -43,6 +44,12 @@ MAINTAINERCLEANFILES =                                  \
         config.h.in config.sub configure install-sh     \
         ltconfig ltmain.sh missing mkinstalldirs        \
         stamp-h.in
+$(BUILD_DIRS):
+	mkdir $@
+
+rpm:  $(BUILD_DIRS) dist
+	mv $(distdir).tar.gz $(top_builddir)/SOURCES
+	rpmbuild -ba --define="_topdir `pwd`" libcircle.spec
 
 distclean-local:
 	-(cd $(top_srcdir) && rm -rf autom4te*.cache autoscan.*)
